@@ -1,0 +1,22 @@
+{
+    "name": "pepijnolivier/laravel-kraken",
+    "description": "Laravel API for kraken.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pepijn Olivier",
+            "email": "olivier.pepijn@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.0.0",
+        "ext-curl": "*",
+        "laravel/framework": ">=5.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pepijnolivier\\Kraken\\": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
