@@ -13,9 +13,9 @@ class KrakenManager
      */
     public function __construct()
     {
-        $this->with(
-            config('kraken.auth')
-        );
+        $key = config('kraken.auth.key');
+        $secret = config('kraken.auth.secret');
+        $this->with($key, $secret);
     }
 
     /**
@@ -48,12 +48,9 @@ class KrakenManager
      * @param array $urls
      * @return $this
      */
-    public function with(array $auth, array $urls = null)
+    public function with(string $key=null, string $secret=null)
     {
-        $urls = $urls ?: config('kraken.urls');
-
-        $this->client = new Client($auth, $urls);
-
+        $this->client = new Client($key, $secret);
         return $this;
     }
 
