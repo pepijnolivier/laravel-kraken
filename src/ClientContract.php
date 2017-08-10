@@ -8,7 +8,7 @@ interface ClientContract
 
     /**
      * Note: This is to aid in approximating the skew time between the server and client.
-     * @return mixed Servers' time
+     * @return array Servers' time
      */
     public function getServerTime();
 
@@ -43,7 +43,7 @@ interface ClientContract
      * @param string $currencypair
      * @param int $timeFrameIntervalMinutes
      * @param string $sinceId return committed OHLC data since given id (optional.  exclusive)
-     * @return mixed
+     * @return array
      */
     public function getTicker(string $currencypair, int $timeFrameIntervalMinutes=1, string $sinceId=null);
 
@@ -52,7 +52,7 @@ interface ClientContract
      *
      * @param string $pair asset pair to get market depth for
      * @param int|null $count maximum number of asks/bids (optional)
-     * @return mixed
+     * @return array
      */
     public function getOrderBook(string $pair, int $count=null);
 
@@ -61,7 +61,7 @@ interface ClientContract
      *
      * @param string $pair asset pair to get trade data for
      * @param string|null $sinceId return trade data since given id (optional.  exclusive)
-     * @return mixed
+     * @return array
      */
     public function getRecentTrades(string $pair, string $sinceId=null);
 
@@ -72,7 +72,7 @@ interface ClientContract
      *
      * @param string $pair asset pair to get spread data for
      * @param string|null $sinceId return spread data since given id (optional.  inclusive)
-     * @return mixed
+     * @return array
      */
     public function getRecentSpreads(string $pair, string $sinceId=null);
 
@@ -218,7 +218,7 @@ interface ClientContract
      *
      * @param array $currencypairs list of asset pairs to get fee info on (optional)
      * @param bool $includeFeeInfo  whether or not to include fee info in results (optional)
-     * @return mixed
+     * @return array
      */
     public function getTradeVolume(array $currencypairs=null, bool $includeFeeInfo=false);
 
@@ -238,14 +238,14 @@ interface ClientContract
      * @param string|null $expireTm
      * @param string|null $userRef
      * @param bool $validateOnly
-     * @return mixed
+     * @return array
      */
     public function addOrder(string $currencypair, string $buyOrSell, string $orderType, string $volume, string $price, string $price2=null, $leverage='none', array $oflags=[], string $startTm=null, string $expireTm=null, string $userRef=null, bool $validateOnly=false);
 
 
     /**
      * @param string $transactionId
-     * @return mixed
+     * @return array
      */
     public function cancelOrder(string $transactionId);
 
@@ -256,7 +256,7 @@ interface ClientContract
      * @param string $currencypair
      * @param string $quantity
      * @param string $rate
-     * @return mixed
+     * @return array
      */
     public function buy(string $currencypair, string $quantity, string $rate);
 
@@ -267,9 +267,78 @@ interface ClientContract
      * @param string $currencypair
      * @param string $quantity
      * @param string $rate
-     * @return mixed
+     * @return array
      */
     public function sell(string $currencypair, string $quantity, string $rate);
+
+
+    /**
+     * @param string $currency
+     * @param string|null $assetClass
+     * @return array
+     */
+    public function getDepositMethods(string $currency, string $assetClass=null);
+
+    /**
+     * @param string $currency
+     * @param string $methodName
+     * @param bool $new
+     * @param string|null $assetClass
+     * @return array of deposit addresses
+     */
+    public function getDepositAddresses(string $currency, string $method, bool $new=false, string $assetClass=null);
+
+    /**
+     * See https://www.kraken.com/help/api#deposit-status
+     *
+     * @param string $currency
+     * @param string $methodName
+     * @param string|null $assetClass
+     * @return array of deposit status information
+     */
+    public function getDepositStatus(string $currency, string $method, string $assetClass=null);
+
+
+    /**
+     * @param string $currency
+     * @param string $key
+     * @param string $amount
+     * @param string|null $assetClass
+     * @return array of withdrawal info
+     */
+    public function getWithdrawInfo(string $currency, string $key, string $amount, string $assetClass=null);
+
+    /**
+     * @param string $currency
+     * @param string $key
+     * @param string $amount
+     * @param string|null $assetClass
+     * @return array of withdrawal transactio
+     */
+    public function withdraw(string $currency, string $key, string $amount, string $assetClass=null);
+
+    /**
+     * See https://www.kraken.com/help/api#withdraw-status
+     *
+     * @param string $currency
+     * @param string $method
+     * @param string|null $assetClass
+     * @return array of withdrawal status information
+     */
+    public function getWithdrawalStatus(string $currency, string $method, string $assetClass=null);
+
+
+    /**
+     * Cancellation cannot be guaranteed. This will put in a cancellation request.
+     * Depending upon how far along the withdrawal process is, it may not be possible to cancel the withdrawal.
+
+     * @param string $currency
+     * @param string $referenceId
+     * @param string|null $assetClass
+     *
+     * @return mixed
+     */
+    public function cancelWithdrawal(string $currency, string $referenceId, string $assetClass=null);
 
 
 }
