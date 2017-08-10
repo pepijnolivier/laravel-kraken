@@ -470,6 +470,130 @@ class Client implements ClientContract
 
 
     /**
+     * Get deposit methods
+     *
+     * Returns data:
+     *     method = name of deposit method
+     *     limit = maximum net amount that can be deposited right now, or false if no limit
+     *     fee = amount of fees that will be paid
+     *     address-setup-fee = whether or not method has an address setup fee (optional)
+     *
+     * @param string $currency
+     * @param string $assetClass
+     * @return array of deposit methods
+     */
+    public function getDepositMethods(string $currency, string $assetClass=null)
+    {
+        return $this->private('DepositMethods', array_filter([
+            'asset' => $currency,
+            'aclass' => $assetClass,
+        ]));
+    }
+
+    /**
+     * @param string $currency
+     * @param string $method
+     * @param bool $new
+     * @param string|null $assetClass
+     * @return array of deposit addresses
+     */
+    public function getDepositAddresses(string $currency, string $method, bool $new=false, string $assetClass=null) {
+        return $this->private('DepositAddresses', array_filter([
+            'asset' => $currency,
+            'aclass' => $assetClass,
+            'method' => $method,
+            'new' => $new
+        ]));
+    }
+
+    /**
+     * See https://www.kraken.com/help/api#deposit-status
+     *
+     * @param string $currency
+     * @param string $method
+     * @param string|null $assetClass
+     * @return array of deposit status information
+     */
+    public function getDepositStatus(string $currency, string $method, string $assetClass = null)
+    {
+        return $this->private('DepositStatus', array_filter([
+            'asset' => $currency,
+            'method' => $method,
+            'aclass' => $assetClass,
+        ]));
+    }
+
+    /**
+     * @param string $currency
+     * @param string $key
+     * @param string $amount
+     * @param string|null $assetClass
+     * @return array of withdrawal info
+     */
+    public function getWithdrawInfo(string $currency, string $key, string $amount, string $assetClass = null)
+    {
+        $data = array_filter([
+            'asset' => $currency,
+            'key' => $key,
+            'amount' => $amount,
+            'aclass' => $assetClass,
+        ]);
+        return $this->private('WithdrawInfo', $data);
+    }
+
+    /**
+     * @param string $currency
+     * @param string $key
+     * @param string $amount
+     * @param string|null $assetClass
+     * @return array of withdrawal transactio
+     */
+    public function withdraw(string $currency, string $key, string $amount, string $assetClass = null)
+    {
+        return $this->private('Withdraw', array_filter([
+            'asset' => $currency,
+            'key' => $key,
+            'amount' => $amount,
+            'aclass' => $assetClass,
+        ]));
+    }
+
+    /**
+     * See https://www.kraken.com/help/api#withdraw-status
+     *
+     * @param string $currency
+     * @param string $method
+     * @param string|null $assetClass
+     * @return array of withdrawal status information
+     */
+    public function getWithdrawalStatus(string $currency, string $method, string $assetClass = null)
+    {
+        return $this->private('WithdrawStatus', array_filter([
+            'asset' => $currency,
+            'method' => $method,
+            'aclass' => $assetClass,
+        ]));
+    }
+
+    /**
+     * Cancellation cannot be guaranteed. This will put in a cancellation request.
+     * Depending upon how far along the withdrawal process is, it may not be possible to cancel the withdrawal.
+     * @param string $currency
+     * @param string $referenceId
+     * @param string|null $assetClass
+     *
+     * @return mixed
+     */
+    public function cancelWithdrawal(string $currency, string $referenceId, string $assetClass = null)
+    {
+        return $this->private('WithdrawCancel', array_filter([
+            'asset' => $currency,
+            'refid' => $referenceId,
+            'aclass' => $assetClass,
+        ]));
+    }
+
+    /**
      * Query public methods
      *
      * @param string $method method name
