@@ -510,11 +510,11 @@ class Client implements ClientContract
      * See https://www.kraken.com/help/api#deposit-status
      *
      * @param string $currency
-     * @param string $method
+     * @param string|null $method
      * @param string|null $assetClass
      * @return array of deposit status information
      */
-    public function getDepositStatus(string $currency, string $method, string $assetClass = null)
+    public function getDepositStatus(string $currency, string $method=null, string $assetClass = null)
     {
         return $this->private('DepositStatus', array_filter([
             'asset' => $currency,
@@ -562,11 +562,11 @@ class Client implements ClientContract
      * See https://www.kraken.com/help/api#withdraw-status
      *
      * @param string $currency
-     * @param string $method
+     * @param string|null $method
      * @param string|null $assetClass
      * @return array of withdrawal status information
      */
-    public function getWithdrawalStatus(string $currency, string $method, string $assetClass = null)
+    public function getWithdrawalStatus(string $currency, string $method=null, string $assetClass = null)
     {
         return $this->private('WithdrawStatus', array_filter([
             'asset' => $currency,
