@@ -1,6 +1,8 @@
 <?php
 namespace Pepijnolivier\Kraken;
 
+use Illuminate\Support\Facades\Log;
+
 class Client implements ClientContract
 {
 
@@ -646,13 +648,15 @@ class Client implements ClientContract
         curl_setopt($this->curl, CURLOPT_URL, $this->url . $path);
         curl_setopt($this->curl, CURLOPT_POSTFIELDS, $postdata);
         curl_setopt($this->curl, CURLOPT_HTTPHEADER, $headers);
-        $result = curl_exec($this->curl);
-        if($result===false)
+        $res = curl_exec($this->curl);
+        if($res===false)
             throw new \Exception('CURL error: ' . curl_error($this->curl));
         // decode results
-        $result = json_decode($result, true);
-        if(!is_array($result))
+        $result = json_decode($res, true);
+        if(!is_array($result)) {
+            Log::error("Kraken Client.php could not decode json from response: '$res'");
             throw new \Exception('JSON decode error');
+        }
         return $result;
     }
 
