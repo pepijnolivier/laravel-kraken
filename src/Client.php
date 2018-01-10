@@ -452,10 +452,21 @@ class Client implements ClientContract
      * @param string $rate
      * @return mixed
      */
-    public function buy(string $currencypair, string $quantity, string $rate)
+    public function buy(string $currencypair, string $quantity, string $rate, $options=[])
     {
-        return $this->addOrder($currencypair, 'buy', 'limit', $quantity, $rate);
-    }
+        $data = array_filter(array_merge([
+            'pair' => $currencypair,
+            'type' => 'buy',
+            'ordertype' => 'limit',
+            'volume' => $quantity,
+            'price' => $rate,
+            'leverage' => 'none',
+        ], $options));
+
+
+        $order = $this->private('AddOrder', $data);
+        return $order;
+        }
 
     /**
      * Limit SELL
@@ -465,9 +476,17 @@ class Client implements ClientContract
      * @param string $rate
      * @return mixed
      */
-    public function sell(string $currencypair, string $quantity, string $rate)
+    public function sell(string $currencypair, string $quantity, string $rate, $options=[])
     {
-        return $this->addOrder($currencypair, 'sell', 'limit', $quantity, $rate);
+        $data = array_filter(array_merge([
+            'pair' => $currencypair,
+            'type' => 'sell',
+            'ordertype' => 'limit',
+            'volume' => $quantity,
+            'price' => $rate,
+            'leverage' => 'none',
+        ], $options));
+        return $this->private('AddOrder', $data);
     }
 
 
