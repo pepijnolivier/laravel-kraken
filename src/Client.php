@@ -1,6 +1,8 @@
 <?php
 namespace Pepijnolivier\Kraken;
 
+use Illuminate\Support\Facades\Log;
+
 class Client implements ClientContract
 {
 
@@ -450,10 +452,21 @@ class Client implements ClientContract
      * @param string $rate
      * @return mixed
      */
-    public function buy(string $currencypair, string $quantity, string $rate)
+    public function buy(string $currencypair, string $quantity, string $rate, $options=[])
     {
-        return $this->addOrder($currencypair, 'buy', 'limit', $quantity, $rate);
-    }
+        $data = array_filter(array_merge([
+            'pair' => $currencypair,
+            'type' => 'buy',
+            'ordertype' => 'limit',
+            'volume' => $quantity,
+            'price' => $rate,
+            'leverage' => 'none',
+        ], $options));
+
+
+        $order = $this->private('AddOrder', $data);
+        return $order;
+        }
 
     /**
      * Limit SELL
@@ -463,9 +476,17 @@ class Client implements ClientContract
      * @param string $rate
      * @return mixed
      */
-    public function sell(string $currencypair, string $quantity, string $rate)
+    public function sell(string $currencypair, string $quantity, string $rate, $options=[])
     {
-        return $this->addOrder($currencypair, 'sell', 'limit', $quantity, $rate);
+        $data = array_filter(array_merge([
+            'pair' => $currencypair,
+            'type' => 'sell',
+            'ordertype' => 'limit',
+            'volume' => $quantity,
+            'price' => $rate,
+            'leverage' => 'none',
+        ], $options));
+        return $this->private('AddOrder', $data);
     }
 
 
@@ -510,11 +531,11 @@ class Client implements ClientContract
      * See https://www.kraken.com/help/api#deposit-status
      *
      * @param string $currency
-     * @param string $method
+     * @param string|null $method
      * @param string|null $assetClass
      * @return array of deposit status information
      */
-    public function getDepositStatus(string $currency, string $method, string $assetClass = null)
+    public function getDepositStatus(string $currency, string $method=null, string $assetClass = null)
     {
         return $this->private('DepositStatus', array_filter([
             'asset' => $currency,
@@ -562,11 +583,11 @@ class Client implements ClientContract
      * See https://www.kraken.com/help/api#withdraw-status
      *
      * @param string $currency
-     * @param string $method
+     * @param string|null $method
      * @param string|null $assetClass
      * @return array of withdrawal status information
      */
-    public function getWithdrawalStatus(string $currency, string $method, string $assetClass = null)
+    public function getWithdrawalStatus(string $currency, string $method=null, string $assetClass = null)
     {
         return $this->private('WithdrawStatus', array_filter([
             'asset' => $currency,
@@ -646,13 +667,15 @@ class Client implements ClientContract
         curl_setopt($this->curl, CURLOPT_URL, $this->url . $path);
         curl_setopt($this->curl, CURLOPT_POSTFIELDS, $postdata);
         curl_setopt($this->curl, CURLOPT_HTTPHEADER, $headers);
-        $result = curl_exec($this->curl);
-        if($result===false)
+        $res = curl_exec($this->curl);
+        if($res===false)
             throw new \Exception('CURL error: ' . curl_error($this->curl));
         // decode results
-        $result = json_decode($result, true);
-        if(!is_array($result))
+        $result = json_decode($res, true);
+        if(!is_array($result)) {
+            Log::error("Kraken Client.php could not decode json from response: '$res'");
             throw new \Exception('JSON decode error');
+        }
         return $result;
     }
 

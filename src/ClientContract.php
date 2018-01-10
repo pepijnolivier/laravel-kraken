@@ -258,7 +258,7 @@ interface ClientContract
      * @param string $rate
      * @return array
      */
-    public function buy(string $currencypair, string $quantity, string $rate);
+    public function buy(string $currencypair, string $quantity, string $rate, $options=[]);
 
 
     /**
@@ -269,7 +269,7 @@ interface ClientContract
      * @param string $rate
      * @return array
      */
-    public function sell(string $currencypair, string $quantity, string $rate);
+    public function sell(string $currencypair, string $quantity, string $rate, $options=[]);
 
 
     /**
